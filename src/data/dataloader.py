@@ -27,11 +27,18 @@ class WikiTextDataset(Dataset):
             dataset: Raw dataset from Hugging Face datasets
             preprocess_fn: Function to preprocess the examples
         """
-        self.tokenized_data = preprocess_fn(dataset)
+        # Use the dataset's map method to apply preprocessing to all examples
+        self.tokenized_data = dataset.map(
+            preprocess_fn,
+            batched=True,
+            remove_columns=dataset.column_names
+        )
+        # Set format to PyTorch tensors
+        self.tokenized_data.set_format(type="torch", columns=["input_ids", "attention_mask", "labels"])
     
     def __len__(self):
         """Return the number of examples in the dataset."""
-        return len(self.tokenized_data["input_ids"])
+        return len(self.tokenized_data)
     
     def __getitem__(self, idx):
         """
@@ -43,11 +50,7 @@ class WikiTextDataset(Dataset):
         Returns:
             Dictionary containing input_ids, attention_mask, and labels
         """
-        return {
-            "input_ids": self.tokenized_data["input_ids"][idx],
-            "attention_mask": self.tokenized_data["attention_mask"][idx],
-            "labels": self.tokenized_data["labels"][idx]
-        }
+        return self.tokenized_data[idx]
 
 
 def get_tokenizer(model_name="distilgpt2"):
@@ -71,7 +74,7 @@ def preprocess_function(examples, tokenizer, max_length=128):
     Preprocess text examples into tokenized format.
     
     Args:
-        examples: Dictionary containing 'text' field
+        examples: Dictionary containing 'text' field (batch of examples)
         tokenizer: Tokenizer to use for encoding
         max_length: Maximum sequence length
         
@@ -82,12 +85,11 @@ def preprocess_function(examples, tokenizer, max_length=128):
         examples["text"],
         truncation=True,
         padding="max_length",
-        max_length=max_length,
-        return_tensors="pt"
+        max_length=max_length
     )
     
     # For language modeling, labels are the same as input_ids
-    tokenized["labels"] = tokenized["input_ids"].clone()
+    tokenized["labels"] = tokenized["input_ids"].copy()
     
     return tokenized
 

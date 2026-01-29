@@ -5,18 +5,24 @@ This script initializes the model, loads data, and runs training with DeepSpeed.
 Supports both ZeRO Stage 2 and Stage 3 configurations.
 
 Usage:
-    # Stage 2 (optimizer state partitioning + CPU offload)
-    python main.py --deepspeed_config config/deepspeed/zero-2.json
+    # Multi-GPU training with Stage 2 (uses all available GPUs)
+    deepspeed main.py --deepspeed_config config/deepspeed/zero-2.json
+    
+    # Multi-GPU training with specific number of GPUs
+    deepspeed --num_gpus=4 main.py --deepspeed_config config/deepspeed/zero-2.json
     
     # Stage 3 (optimizer + parameters + gradients partitioning + CPU offload)
-    python main.py --deepspeed_config config/deepspeed/zero-3.json
+    deepspeed main.py --deepspeed_config config/deepspeed/zero-3.json
     
     # With custom settings
-    python main.py --deepspeed_config config/deepspeed/zero-2.json \
-                   --model_name distilgpt2 \
-                   --num_epochs 3 \
-                   --batch_size 16 \
-                   --max_length 256
+    deepspeed --num_gpus=4 main.py --deepspeed_config config/deepspeed/zero-2.json \
+                                    --model_name distilgpt2 \
+                                    --num_epochs 3 \
+                                    --batch_size 16 \
+                                    --max_length 256
+    
+    # Single GPU training (for testing)
+    python main.py --deepspeed_config config/deepspeed/zero-2.json
 """
 
 import argparse
