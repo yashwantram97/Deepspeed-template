@@ -19,6 +19,18 @@ Template/
 └── README.md
 ```
 
+## ✅ Verified Training Results
+
+This template has been tested and verified on a 4x Tesla T4 GPU setup. Below are proofs of successful training:
+
+### Training in Progress
+![Training Progress](assets/images/Actually-training.png)
+*DeepSpeed training running with ZeRO Stage 2, showing epoch progress and loss convergence*
+
+### GPU Utilization
+![GPU Utilization](assets/images/consuming-all-gpu-zero2.png)
+*nvidia-smi output showing all 4 GPUs being utilized effectively with distributed memory allocation*
+
 ## 🚀 Features
 
 - **Modular Design**: Separate modules for data loading, training, and configuration
