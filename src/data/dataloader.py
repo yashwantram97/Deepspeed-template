@@ -6,8 +6,8 @@ for training language models with DeepSpeed.
 """
 
 import torch
-from torch.utils.data import DataLoader, Dataset
 from datasets import load_dataset
+from torch.utils.data import DataLoader, Dataset
 from transformers import AutoTokenizer
 
 
